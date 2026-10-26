@@ -83,7 +83,7 @@
     "cluster"
   ],
   "description": "Puppet Module to install/configure MariaDB client/cluster/server",
-  "pdk-version": "1.18.1",
-  "template-url": "https://github.com/puppetlabs/pdk-templates#1.9.0",
-  "template-ref": "tags/1.9.0-0-g7281db5"
+  "pdk-version": "3.5.1 (g7d6a7d3)",
+  "template-url": "https://github.com/puppetlabs/pdk-templates#3.5.1",
+  "template-ref": "tags/3.5.1-0-g9d5b193"
 }
