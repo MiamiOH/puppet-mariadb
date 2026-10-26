@@ -1,11 +1,11 @@
 # mysql.pp
 # Manage the puppetlabs mysql module.
 #
+# @param dev
 
 class mariadb::client::mysql (
-  $dev = $mariadb::client::dev,
-){
-
+  Boolean $dev = $mariadb::client::dev,
+) {
   class { 'mysql::client':
     package_ensure => present,
     package_name   => $mariadb::params::client_package_name,

@@ -16,7 +16,6 @@
 #
 
 class mariadb::client::config {
-
   $options = $mariadb::client::options
   $includedir = false
 

@@ -7,13 +7,13 @@ class mariadb::repo::yum {
   $os      = $mariadb::repo::os
   $arch    = $mariadb::repo::arch
 
-  $module_hotfixes = $::operatingsystemmajrelease ? {
+  $module_hotfixes = $facts['os']['release']['major'] ? {
     '8'     => '1',
     default => '0',
   }
 
   yumrepo { 'mariadb':
-    baseurl         => "http://yum.mariadb.org/${version}/${os}${::operatingsystemmajrelease}-${arch}",
+    baseurl         => "http://yum.mariadb.org/${version}/${os}${facts['os']['release']['major']}-${arch}",
     descr           => 'MariaDB',
     enabled         => '1',
     gpgcheck        => '1',

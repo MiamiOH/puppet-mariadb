@@ -2,12 +2,15 @@
 # Manage the mariadb repo.
 #
 
+# Configure the official MariaDB package repository.
+#
+# @param repo_version MariaDB repository major/minor version, such as `10.11`.
+# @param percona_repo Also configure the Percona repository for SST tools.
 class mariadb::repo (
   Pattern[/^\d+\.?\d*$/] $repo_version = $mariadb::params::repo_version,
   Boolean $percona_repo = false,
 ) inherits mariadb::params {
-
-  $os = $::operatingsystem ? {
+  $os = $facts['os']['name'] ? {
     'RedHat'      => 'rhel',
     'CentOS'      => 'centos',
     'Fedora'      => 'fedora',
@@ -17,25 +20,25 @@ class mariadb::repo (
     'Rocky'       => 'rhel',
     'AlmaLinux'   => 'rhel',
   }
-  $arch = $::architecture ? {
+  $arch = $facts['os']['architecture'] ? {
     'i386'   => 'x86',
     'x86_64' => 'amd64',
-    default  => $::architecture,
+    default  => $facts['os']['architecture'],
   }
 
-  case $::osfamily {
+  case $facts['os']['family'] {
     'RedHat': {
-      include 'mariadb::repo::yum'
+      include mariadb::repo::yum
     }
     'Debian': {
-      include 'mariadb::repo::apt'
+      include mariadb::repo::apt
     }
     default: {
-      fail("Unsupported managed repository for ${::osfamily}, currently only supports RedHat and Debian")
+      fail("Unsupported managed repository for ${facts['os']['family']}, currently only supports RedHat and Debian")
     }
   }
 
   if $percona_repo {
-    include 'mariadb::repo::percona'
+    include mariadb::repo::percona
   }
 }

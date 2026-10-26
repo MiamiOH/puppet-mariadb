@@ -4,11 +4,20 @@
 ---
 fixtures:
   forge_modules:
-    apt: "puppetlabs/apt"
-    stdlib: "puppetlabs/stdlib"
-    mysql: "puppetlabs/mysql"
-    # Extracted from core in puppet 6
-    cron_core: "puppetlabs/cron_core"
-    yumrepo_core: "puppetlabs/yumrepo_core"
+    apt:
+      repo: puppetlabs/apt
+      ref: 8.5.0
+    stdlib:
+      repo: puppetlabs/stdlib
+      ref: 9.7.0
+    mysql:
+      repo: puppetlabs/mysql
+      ref: 14.0.0
+    cron_core:
+      repo: puppetlabs/cron_core
+      ref: 2.1.0
+    yumrepo_core:
+      repo: puppetlabs/yumrepo_core
+      ref: 2.1.0
   symlinks:
     mariadb: "#{source_dir}"

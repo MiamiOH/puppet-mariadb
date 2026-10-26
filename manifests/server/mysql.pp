@@ -4,8 +4,7 @@
 
 class mariadb::server::mysql (
   Boolean $cluster = false,
-){
-
+) {
   if $mariadb::server::auth_pam {
     $auth_pam_options = { 'mysqld' => { 'plugin-load' => $mariadb::server::auth_pam_plugin } }
   } else {

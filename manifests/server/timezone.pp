@@ -12,13 +12,12 @@
 #
 
 class mariadb::server::timezone {
-
   $tzinfo_command   = 'mysql_tzinfo_to_sql /usr/share/zoneinfo'
   # replicate_myisam is failing here... so disable it and do it on all nodes instead
   # This feature is experimental anyways and not recommended on production, so why set it GLOBALLY ???
   # $no_wsrep_command = "sed 's/SET GLOBAL wsrep_replicate_myisam.*;/SET SESSION wsrep_on=OFF;/'" # SET SESSION wsrep_on=OFF;
 
-  $mysql_command = join(['mysql', "--defaults-extra-file=${::root_home}/.my.cnf"], ' ')
+  $mysql_command = join(['mysql', "--defaults-extra-file=${facts['root_home']}/.my.cnf"], ' ')
   $mysql_execute = join([$mysql_command, '-NBe'], ' ')
 
   # Run sql to set up time zones

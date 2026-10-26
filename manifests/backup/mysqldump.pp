@@ -6,32 +6,55 @@
 #
 # @example
 #   include mariadb::backup::mysqldump
+# Configure scheduled logical backups using mysqldump.
+#
+# @param backupuser Database account used by mysqldump.
+# @param backuppassword Password for the backup account; use a secret backend.
+# @param backupdir Destination directory for dump files.
+# @param maxallowedpacket Maximum packet size passed to mysqldump.
+# @param backupdirmode Permissions for the backup directory.
+# @param backupdirowner Owner of the backup directory.
+# @param backupdirgroup Group of the backup directory.
+# @param backupcompress Whether to compress dump output.
+# @param backuprotate Number of backups to retain.
+# @param initiator_node Whether this node initiates the backup schedule.
+# @param ignore_events Ignore changes to selected resources when scheduling.
+# @param delete_before_dump Remove old dump files before creating new ones.
+# @param backupdatabases List of databases to back up.
+# @param file_per_database Write a separate dump file per database.
+# @param include_triggers Include triggers in the dump.
+# @param include_routines Include stored procedures and functions.
+# @param ensure Whether the scheduled backup is present or absent.
+# @param time Cron hour and minute values.
+# @param prescript Optional command to run before backup.
+# @param postscript Optional command to run after backup.
+# @param execpath PATH used by scheduled backup commands.
+# @param optional_args Additional command-line arguments.
 class mariadb::backup::mysqldump (
-  $backupuser         = '', # lint:ignore:empty_string_assignment
-  $backuppassword     = '', # lint:ignore:empty_string_assignment
-  $backupdir          = '', # lint:ignore:empty_string_assignment
-  $maxallowedpacket   = '1M',
-  $backupdirmode      = '0700',
-  $backupdirowner     = $mariadb::params::user,
-  $backupdirgroup     = $mariadb::params::group,
-  $backupcompress     = true,
-  $backuprotate       = 30,
-  $initiator_node     = false,
-  $ignore_events      = true,
-  $delete_before_dump = false,
-  $backupdatabases    = [],
-  $file_per_database  = false,
-  $include_triggers   = false,
-  $include_routines   = false,
-  $ensure             = 'present',
-  $time               = ['23', '5'],
-  $prescript          = false,
-  $postscript         = false,
-  $execpath           = '/usr/bin:/usr/sbin:/bin:/sbin',
-  $optional_args      = [],
+  String $backupuser = '', # lint:ignore:empty_string_assignment
+  String $backuppassword = '', # lint:ignore:empty_string_assignment
+  String $backupdir = '', # lint:ignore:empty_string_assignment
+  String[1] $maxallowedpacket = '1M',
+  String[1] $backupdirmode = '0700',
+  String[1] $backupdirowner = $mariadb::params::user,
+  String[1] $backupdirgroup = $mariadb::params::group,
+  Boolean $backupcompress = true,
+  Integer[0] $backuprotate = 30,
+  Boolean $initiator_node = false,
+  Boolean $ignore_events = true,
+  Boolean $delete_before_dump = false,
+  Array[String[1]] $backupdatabases = [],
+  Boolean $file_per_database = false,
+  Boolean $include_triggers = false,
+  Boolean $include_routines = false,
+  Enum['present', 'absent'] $ensure = 'present',
+  Tuple[Variant[String, Integer], Variant[String, Integer]] $time = ['23', '5'],
+  Variant[Boolean, String, Array[String]] $prescript = false,
+  Variant[Boolean, String, Array[String]] $postscript = false,
+  String[1] $execpath = '/usr/bin:/usr/sbin:/bin:/sbin',
+  Array $optional_args = [],
 ) inherits mariadb::params {
-
-  include 'mariadb::cluster'
+  include mariadb::cluster
 
   if $backupcompress {
     ensure_packages(['bzip2'])
@@ -51,10 +74,10 @@ class mariadb::backup::mysqldump (
     require       => Class['mysql::server::root_password'],
   }
 
-  if $include_triggers  {
-    $privs = [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS', 'TRIGGER' ]
+  if $include_triggers {
+    $privs = ['SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS', 'TRIGGER']
   } else {
-    $privs = [ 'SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS' ]
+    $privs = ['SELECT', 'RELOAD', 'LOCK TABLES', 'SHOW VIEW', 'PROCESS']
   }
 
   mysql_grant { "${backupuser}@localhost/*.*":
@@ -85,7 +108,7 @@ class mariadb::backup::mysqldump (
     path    => '/etc/garbd.conf',
     mode    => '0700',
     owner   => 'root',
-    group   => $::mysql::params::root_group,
+    group   => $mysql::params::root_group,
     content => $garbd_conf.delete("'"),
   }
 

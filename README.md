@@ -135,17 +135,52 @@ mariadb::cluster::galera_override_options:
 
 ## Reference
 
-### Classes
+### Classes and parameter reference
 
-* mariadb::client
-* mariadb::cluster
-* mariadb::server
-* mariadb::repo
+The class parameters below are the supported public interface. All configuration option hashes are merged with module defaults; set an option to `undef` where the upstream `puppetlabs/mysql` module supports removing a default.
+
+| Class | Parameter | Default | Description |
+|---|---|---|---|
+| `mariadb::client` | `manage_repo` | `true` | Manage the MariaDB repository. |
+| `mariadb::client` | `repo_version` | `10.10` | MariaDB repository version, for example `10.11`. |
+| `mariadb::client` | `dev` | `true` | Install development headers/bindings. |
+| `mariadb::client` | `config_dir` | OS-specific | Directory for client configuration. |
+| `mariadb::client` | `override_options` | `{}` | Client configuration overrides. |
+| `mariadb::server` | `manage_user` | `false` | Manage the operating-system user/group. |
+| `mariadb::server` | `manage_timezone` | `false` | Load timezone tables. |
+| `mariadb::server` | `manage_repo` | `true` | Manage the MariaDB repository. |
+| `mariadb::server` | `repo_version` | `10.10` | MariaDB repository version. |
+| `mariadb::server` | `cluster` | `false` | Select cluster package behavior. Normally use `mariadb::cluster` for Galera. |
+| `mariadb::server` | `remove_default_accounts` | `true` | Remove default database accounts. |
+| `mariadb::server` | `restart` | `true` | Restart after configuration changes. |
+| `mariadb::server` | `service_enabled` / `service_manage` | `true` | Control service enablement and management. |
+| `mariadb::server` | `service_name` | OS-specific | Service resource name. |
+| `mariadb::server` | `user`, `group`, `uid`, `gid`, `home`, `shell`, `comment`, `groups` | OS-specific | Operating-system account settings used when `manage_user` is enabled. |
+| `mariadb::server` | `config_file`, `includedir`, `config_dir` | OS-specific | MariaDB configuration paths. |
+| `mariadb::server` | `root_password` | `UNSET` | Database root password; set via Hiera/secret backend. Configure explicitly before production use. |
+| `mariadb::server` | `auth_pam`, `auth_pam_plugin` | `true`, `auth_pam.so` | Configure PAM authentication. |
+| `mariadb::server` | `override_options` | `{}` | Server configuration overrides. |
+| `mariadb::server` | `users`, `grants`, `databases` | `{}` | Resources passed to `puppetlabs/mysql`. |
+| `mariadb::server` | `storeconfigs_enabled` | `false` | Enable exported-resource collection when storeconfigs is enabled. |
+| `mariadb::cluster` | `wsrep_cluster_address` | `undef` | Explicit Galera address; takes precedence over peer list. |
+| `mariadb::cluster` | `wsrep_cluster_peers` | `undef` | Peer addresses used to build the `gcomm://` address. |
+| `mariadb::cluster` | `wsrep_cluster_port` | `4567` | Galera replication port. |
+| `mariadb::cluster` | `wsrep_cluster_name` | `undef` | Shared cluster name. |
+| `mariadb::cluster` | `wsrep_sst_user`, `wsrep_sst_user_peers`, `wsrep_sst_password` | `wsrep_sst`, `%`, `UNSET` | SST authentication settings. Set the password securely before enabling SST authentication. |
+| `mariadb::cluster` | `wsrep_sst_method` | `mysqldump` | SST method: `mariabackup`, `mysqldump`, `rsync`, `rsync_wan`, `xtrabackup`, or `xtrabackup-v2`. |
+| `mariadb::cluster` | `override_options` | `{}` | MariaDB server configuration overrides. |
+| `mariadb::cluster` | `galera_override_options` | `{}` | Galera/wsrep configuration overrides. |
+| `mariadb::cluster` | `auth_pam`, `auth_pam_plugin` | `true`, `auth_pam.so` | Configure PAM authentication. |
+| `mariadb::cluster` | `users`, `grants`, `databases` | `{}` | Resources passed to `puppetlabs/mysql`. |
+| `mariadb::cluster` | `storeconfigs_enabled` | `false` | Enable exported-resource collection when storeconfigs is enabled. |
+| `mariadb::repo` | `repo_version` | `10.10` | MariaDB repository version. |
+| `mariadb::repo` | `percona_repo` | `false` | Also configure the Percona repository. |
+
+Password parameters default to the historical sentinel `UNSET` for compatibility. Production deployments should explicitly set credentials using Hiera eyaml or another secret backend and should not commit plaintext secrets to control repositories.
 
 ## Limitations
 
-This module has been built on and tested against Puppet 3.8 and higher.  
-While I am sure other versions work, I have not tested them.
+The module targets Puppet 7 and Puppet 8. The dependency constraints allow stdlib 8 and 9; validate the module against the exact Puppet/stdlib and puppetlabs/mysql versions deployed in your environment.
 
 This module supports modern RedHat and Debian based systems.  
 No plans to support other versions (unless you add it :)..

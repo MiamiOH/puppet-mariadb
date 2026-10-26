@@ -3,7 +3,6 @@
 #
 
 class mariadb::server::user {
-
   if $mariadb::server::group {
     group { 'mysql':
       ensure => present,

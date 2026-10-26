@@ -3,7 +3,7 @@
 #
 
 class mariadb::params {
-  include 'mysql::params'
+  include mysql::params
 
   # ### init vars ####
   $manage_user             = false
@@ -14,7 +14,7 @@ class mariadb::params {
   $auth_pam_plugin         = 'auth_pam.so'
   $remove_default_accounts = true
 
-  $service_name = $::service_provider ? {
+  $service_name = $facts['service_provider'] ? {
     'systemd' => 'mariadb',
     default   => 'mysql',
   }
@@ -30,7 +30,7 @@ class mariadb::params {
   $wsrep_sst_method      = 'mysqldump'
   $root_password         = 'UNSET' # lint:ignore:security_password_in_code
 
-  if ($::osfamily == 'RedHat') and (versioncmp($::operatingsystemrelease, '6.0') >= 0) {
+  if ($facts['os']['family'] == 'RedHat') and (versioncmp($facts['os']['release']['full'], '6.0') >= 0) {
     # client.pp
     $client_package_name = 'MariaDB-client'
     $shared_package_name = 'MariaDB-shared'
@@ -63,9 +63,9 @@ class mariadb::params {
 
     # backup
     $backup_package_name = 'MariaDB-backup'
-  } elsif ($::osfamily == 'Debian') and (
-    (($::operatingsystem == 'Debian') and (versioncmp($::operatingsystemrelease, '7.0') >= 0)) or
-    (($::operatingsystem == 'Ubuntu') and (versioncmp($::operatingsystemrelease, '12.0') >= 0))
+  } elsif ($facts['os']['family'] == 'Debian') and (
+    (($facts['os']['name'] == 'Debian') and (versioncmp($facts['os']['release']['full'], '7.0') >= 0)) or
+    (($facts['os']['name'] == 'Ubuntu') and (versioncmp($facts['os']['release']['full'], '12.0') >= 0))
   ) {
     # client.pp
     $client_package_name = 'mariadb-client'
@@ -100,7 +100,7 @@ class mariadb::params {
     # backup
     $backup_package_name = 'mariadb-backup'
   } else {
-    fail("The ${module_name} module is not supported on a ${::osfamily} based system with version ${::operatingsystemrelease}.")
+    fail("The ${module_name} module is not supported on a ${facts['os']['family']} based system with version ${facts['os']['release']['full']}.")
   }
 
   $client_default_options = {
@@ -144,10 +144,10 @@ class mariadb::params {
     'mysqld' => {
       'wsrep_on'                        => 'ON',
       'wsrep_provider'                  => $wsrep_provider,
-      'wsrep_node_name'                 => $::hostname,
+      'wsrep_node_name'                 => $facts['networking']['hostname'],
       'wsrep_slave_threads'             => '1', # $::processorcount * 2
-      'wsrep_node_address'              => $::ipaddress,
-      'wsrep_node_incoming_address'     => $::ipaddress,
+      'wsrep_node_address'              => $facts['networking']['ip'],
+      'wsrep_node_incoming_address'     => $facts['networking']['ip'],
       'binlog_format'                   => 'ROW',
       'default_storage_engine'          => 'InnoDB',
       'innodb_autoinc_lock_mode'        => '2',
