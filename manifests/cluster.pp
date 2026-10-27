@@ -107,8 +107,8 @@ class mariadb::cluster (
   String[1] $wsrep_sst_user = $mariadb::params::wsrep_sst_user,
   Variant[Array[String[1]], String[1]] $wsrep_sst_user_peers = $mariadb::params::wsrep_sst_user_peers,
   String $wsrep_sst_password = $mariadb::params::wsrep_sst_password,
-  Optional[Hash] $wsrep_sst_user_tls_options = undef,
-  Optional[Hash] $wsrep_sst_user_grant_options = undef,
+  Optional[Array[String]] $wsrep_sst_user_tls_options = undef,
+  Optional[Array[String]] $wsrep_sst_user_grant_options = undef,
   Enum['mariabackup', 'mysqldump', 'rsync', 'rsync_wan', 'xtrabackup', 'xtrabackup-v2'] $wsrep_sst_method = $mariadb::params::wsrep_sst_method, # lint:ignore:140chars
   String $root_password = $mariadb::params::root_password,
   Hash $override_options = {},

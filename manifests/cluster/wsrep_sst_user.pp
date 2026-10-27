@@ -12,8 +12,8 @@
 define mariadb::cluster::wsrep_sst_user (
   String $wsrep_sst_password,
   String[1] $wsrep_sst_user = $name,
-  Optional[Hash] $wsrep_sst_user_tls_options = undef,
-  Optional[Hash] $wsrep_sst_user_grant_options = undef,
+  Optional[Array[String]] $wsrep_sst_user_tls_options = undef,
+  Optional[Array[String]] $wsrep_sst_user_grant_options = undef,
 ) {
   mysql_user { $wsrep_sst_user:
     ensure        => present,
